@@ -98,6 +98,35 @@ function Roadmap() {
     setNodeColor(color.hex);
   };
 
+  // Recursive function to find all descendants of a node
+  const findAllDescendants = (nodeId, edges, descendants = new Set()) => {
+    edges.forEach(edge => {
+      if (edge.source === nodeId && !descendants.has(edge.target)) {
+        descendants.add(edge.target);
+        findAllDescendants(edge.target, edges, descendants);
+      }
+    });
+    return descendants;
+  };
+
+  // Handle node click and toggle visibility
+  const onNodeClick = (event, node) => {
+    const descendants = findAllDescendants(node.id, edges);
+
+    // Toggle visibility of the clicked node's descendants
+    setNodes(prevNodes =>
+      prevNodes.map(n => {
+        if (n.id !== node.id && descendants.has(n.id)) {
+          return {
+            ...n,
+            hidden: !n.hidden,
+          };
+        }
+        return n;
+      })
+    );
+  };
+
   // Handle node selection
   const onNodeSelect = (event, node) => {
     setSelectedNode(node);
@@ -131,14 +160,18 @@ function Roadmap() {
   };
 
   const styles = {
-    background: '#fff',
+    background: 'rgb(243 244 246)',
     width: '100%',
     height: 500,
   };
 
   return (
     <div style={{ height: 600 }} className='flex justify-center items-center w-full'>
-      <div className='h-full w-[40%] flex items-center justify-center flex-col bg-gray-300 space-y-6'>
+      <div className='h-full w-[40%] flex items-center justify-center flex-col bg-gray-100 space-y-6 border-r border-gray-600'>
+        <span className='flex gap-3'>
+          <h2 className='text-lg font-bold text-gray-800'>Node Editor</h2>
+          <button className='bg-gray-800 py-2 px-4 text-[12px] hover:bg-black duration-500 text-white rounded-[18px]'>Save Roadmap</button>
+        </span>
         <input
           type="text"
           className='bg-gray-200 px-3 py-2 rounded-[24px] border shadow-xl border-gray-800 outline-none text-black'
@@ -164,9 +197,9 @@ function Roadmap() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={connect}
-        onNodeClick={onNodeSelect}  // Capture node selection
+        onNodeClick={onNodeClick}  // Capture node click for toggling visibility
         onEdgeClick={onEdgeSelect}  // Capture edge selection
-        fitview
+        fitview='true'
         nodeTypes={nodeTypes}
       >
         <Background />
