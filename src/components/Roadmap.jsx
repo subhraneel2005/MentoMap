@@ -125,6 +125,9 @@ function Roadmap() {
         return n;
       })
     );
+
+    setSelectedNode(node);
+    setSelectedEdge(null);
   };
 
   // Handle node selection
