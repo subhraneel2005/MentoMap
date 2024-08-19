@@ -1,6 +1,6 @@
 
 import "./globals.css";
-
+import SessionProviderWrapper from "@/providers/SessionProviderWrapper.js"
 
 
 export const metadata = {
@@ -11,7 +11,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SessionProviderWrapper>
+          {children}
+        </SessionProviderWrapper>
+      </body>
     </html>
   );
 }
